@@ -331,25 +331,55 @@ const Home = () => {
 				className='code-example-section'
 				ref={codeRef}
 			>
-				<h2 className='section-title'>Hızlı Başlangıç</h2>
 				<div className='code-example-container'>
-					<pre className='code-example'>
-						<code>{codeExample}</code>
-					</pre>
+					<div className='code-example'>
+						<div className='code-line code-comment'>
+							// API'den rastgele bir soru almak için
+						</div>
+						<div className='code-line'>
+							<span className='code-keyword'>const</span> response
+							= <span className='code-keyword'>await</span> fetch(
+							<span className='code-string'>
+								'https://triviapi.dev/api/quizzes/random'
+							</span>
+							);
+						</div>
+						<div className='code-line'>
+							<span className='code-keyword'>const</span> quiz ={' '}
+							<span className='code-keyword'>await</span>{' '}
+							response.json();
+						</div>
+						<div className='code-line code-comment'>
+							// Soru detaylarını görüntüle
+						</div>
+						<div className='code-line'>
+							console.log(quiz.question);
+						</div>
+						<div className='code-line'>
+							console.log(quiz.answers);
+						</div>
+						<div className='code-line code-comment'>
+							// Doğru cevabı kontrol et
+						</div>
+						<div className='code-line'>
+							<span className='code-keyword'>const</span>{' '}
+							isCorrect = userAnswer === quiz.correctAnswer;
+						</div>
+					</div>
 					<div className='code-example-description'>
-						<h3>Basit ve Hızlı</h3>
+						<h3>Hızlı Başlangıç</h3>
 						<p>
-							Sadece birkaç satır kod ile API'mizi kullanmaya
-							başlayın. Modern web standartlarına uygun, güvenilir
-							ve hızlı.
+							Sadece birkaç satır kodla API'yi projenize entegre
+							edin. Modern ve kullanımı kolay REST API'miz ile
+							trivia sorularını hızlıca uygulamanıza ekleyin.
 						</p>
-						<Link
-							to='/browse'
+						<a
+							href='/docs'
 							className='code-example-button'
 						>
+							<span>📚</span>
 							<span>Dokümantasyonu İncele</span>
-							<span className='button-icon'>📚</span>
-						</Link>
+						</a>
 					</div>
 				</div>
 			</section>

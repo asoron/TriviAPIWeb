@@ -38,7 +38,7 @@ function Navbar() {
 						}`}
 					>
 						<span className='nav-icon'>🏠</span>
-						Ana Sayfa
+						<span className='nav-text'>Ana Sayfa</span>
 					</Link>
 					<Link
 						to='/submit'
@@ -47,7 +47,7 @@ function Navbar() {
 						}`}
 					>
 						<span className='nav-icon'>➕</span>
-						Soru Ekle
+						<span className='nav-text'>Soru Ekle</span>
 					</Link>
 					<Link
 						to='/browse'
@@ -56,7 +56,16 @@ function Navbar() {
 						}`}
 					>
 						<span className='nav-icon'>🎯</span>
-						Sorular
+						<span className='nav-text'>Sorular</span>
+					</Link>
+					<Link
+						to='/docs'
+						className={`nav-link ${
+							location.pathname === '/docs' ? 'active' : ''
+						}`}
+					>
+						<span className='nav-icon'>📚</span>
+						<span className='nav-text'>Dokümantasyon</span>
 					</Link>
 					<Link
 						to='/admin'
@@ -65,7 +74,7 @@ function Navbar() {
 						}`}
 					>
 						<span className='nav-icon'>⚙️</span>
-						Yönetici
+						<span className='nav-text'>Yönetici</span>
 					</Link>
 				</div>
 			</div>

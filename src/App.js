@@ -10,6 +10,7 @@ import Home from './pages/Home';
 import SubmitQuiz from './pages/SubmitQuiz';
 import AdminDashboard from './pages/AdminDashboard';
 import BrowseQuizzes from './pages/BrowseQuizzes';
+import Documentation from './pages/Documentation';
 
 import './styles/App.css';
 
@@ -35,6 +36,10 @@ function App() {
 						<Route
 							path='/browse'
 							element={<BrowseQuizzes />}
+						/>
+						<Route
+							path='/docs'
+							element={<Documentation />}
 						/>
 					</Routes>
 				</main>
