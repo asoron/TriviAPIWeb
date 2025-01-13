@@ -1,0 +1,62 @@
+/**
+ * App.css
+ *
+ * @format
+ */
+
+:root {
+	--primary: #7c3aed;
+	--primary-hover: #6d28d9;
+	--background: #0f172a;
+	--surface: #1e293b;
+	--text: #f8fafc;
+	--text-secondary: #94a3b8;
+	--border: #334155;
+	--error: #ef4444;
+	--success: #10b981;
+	--warning: #f59e0b;
+	--shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+	--shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1),
+		0 4px 6px -4px rgb(0 0 0 / 0.1);
+}
+
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+body {
+	font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+	line-height: 1.5;
+	-webkit-font-smoothing: antialiased;
+	background-color: var(--background);
+	color: var(--text);
+}
+
+.app {
+	min-height: 100vh;
+}
+
+.main-content {
+	padding-top: 64px;
+	min-height: calc(100vh - 64px);
+}
+
+::-webkit-scrollbar {
+	width: 8px;
+	height: 8px;
+}
+
+::-webkit-scrollbar-track {
+	background: var(--surface);
+}
+
+::-webkit-scrollbar-thumb {
+	background: var(--border);
+	border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+	background: var(--primary);
+}

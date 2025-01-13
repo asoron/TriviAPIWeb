@@ -1,0 +1,202 @@
+/** @format */
+
+/* Reset default styles */
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+:root {
+	--bg-primary: #121212;
+	--bg-secondary: #1e1e1e;
+	--bg-tertiary: #2d2d2d;
+	--text-primary: #ffffff;
+	--text-secondary: #b0b0b0;
+	--text-tertiary: #808080;
+	--accent-primary: #ff4081;
+	--accent-secondary: #ff679a;
+	--accent-tertiary: #ff85a8;
+	--success: #4caf50;
+	--error: #f44336;
+	--warning: #ff9800;
+	--shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+	--shadow-md: 0 4px 8px rgba(0, 0, 0, 0.2);
+	--shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+body {
+	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+		'Helvetica Neue', Arial, sans-serif;
+	line-height: 1.6;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	background-color: var(--bg-primary);
+	color: var(--text-primary);
+}
+
+.app {
+	min-height: 100vh;
+}
+
+.main-content {
+	padding-top: 80px;
+	min-height: calc(100vh - 80px);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+	width: 8px;
+}
+
+::-webkit-scrollbar-track {
+	background: var(--bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+	background: var(--accent-primary);
+	border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+	background: var(--accent-secondary);
+}
+
+/* Common button styles */
+.button {
+	display: inline-block;
+	padding: 0.8rem 1.5rem;
+	border-radius: 25px;
+	border: 1px solid var(--accent-primary);
+	background: transparent;
+	color: var(--text-primary);
+	font-size: 1rem;
+	font-weight: 500;
+	cursor: pointer;
+	transition: all 0.3s ease;
+	text-decoration: none;
+	text-align: center;
+}
+
+.button:hover {
+	background: var(--accent-primary);
+	transform: translateY(-2px);
+	box-shadow: var(--shadow-md);
+}
+
+.button-primary {
+	background: var(--accent-primary);
+}
+
+.button-primary:hover {
+	background: var(--accent-secondary);
+}
+
+/* Common card styles */
+.card {
+	background: var(--bg-secondary);
+	border-radius: 12px;
+	padding: 1.5rem;
+	box-shadow: var(--shadow-md);
+	transition: all 0.3s ease;
+	border: 1px solid transparent;
+}
+
+.card:hover {
+	transform: translateY(-5px);
+	box-shadow: var(--shadow-lg);
+	border-color: var(--accent-primary);
+}
+
+/* Common input styles */
+.input {
+	width: 100%;
+	padding: 0.8rem 1rem;
+	border-radius: 8px;
+	border: 1px solid var(--accent-primary);
+	background: var(--bg-secondary);
+	color: var(--text-primary);
+	font-size: 1rem;
+	transition: all 0.3s ease;
+}
+
+.input:focus {
+	outline: none;
+	border-color: var(--accent-secondary);
+	box-shadow: 0 0 0 3px rgba(255, 64, 129, 0.2);
+}
+
+/* Common select styles */
+.select {
+	appearance: none;
+	width: 100%;
+	padding: 0.8rem 1rem;
+	border-radius: 8px;
+	border: 1px solid var(--accent-primary);
+	background: var(--bg-secondary);
+	color: var(--text-primary);
+	font-size: 1rem;
+	cursor: pointer;
+	transition: all 0.3s ease;
+}
+
+.select:focus {
+	outline: none;
+	border-color: var(--accent-secondary);
+	box-shadow: 0 0 0 3px rgba(255, 64, 129, 0.2);
+}
+
+/* Common chip styles */
+.chip {
+	display: inline-block;
+	padding: 0.4rem 0.8rem;
+	border-radius: 16px;
+	background: rgba(255, 64, 129, 0.1);
+	border: 1px solid var(--accent-primary);
+	color: var(--text-primary);
+	font-size: 0.8rem;
+	margin-right: 0.5rem;
+	margin-bottom: 0.5rem;
+	transition: all 0.3s ease;
+}
+
+.chip:hover {
+	background: rgba(255, 64, 129, 0.2);
+	transform: translateY(-1px);
+}
+
+/* Animations */
+@keyframes fadeIn {
+	from {
+		opacity: 0;
+		transform: translateY(10px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@keyframes slideIn {
+	from {
+		opacity: 0;
+		transform: translateX(-20px);
+	}
+	to {
+		opacity: 1;
+		transform: translateX(0);
+	}
+}
+
+@keyframes scaleIn {
+	from {
+		opacity: 0;
+		transform: scale(0.95);
+	}
+	to {
+		opacity: 1;
+		transform: scale(1);
+	}
+}
+
+/* Add any additional global styles here */
