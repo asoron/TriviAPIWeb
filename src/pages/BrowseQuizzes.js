@@ -4,332 +4,427 @@ import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import '../styles/BrowseQuizzes.css';
 
+const API_URL = 'https://triviapi.onrender.com/api';
+
 function BrowseQuizzes() {
-	const [filters, setFilters] = useState({
-		category: '',
-		answerType: '',
-		authorName: '',
-	});
+	const [loading, setLoading] = useState(true);
 	const [currentQuiz, setCurrentQuiz] = useState(null);
-	const [selectedAnswer, setSelectedAnswer] = useState('');
 	const [score, setScore] = useState(0);
 	const [questionsAnswered, setQuestionsAnswered] = useState(0);
-	const [loading, setLoading] = useState(true);
-	const [availableCategories, setAvailableCategories] = useState([]);
-	const [availableAuthors, setAvailableAuthors] = useState([]);
-	const [skipCount, setSkipCount] = useState(0);
+	const [selectedAnswer, setSelectedAnswer] = useState(null);
+	const [showCorrect, setShowCorrect] = useState(false);
+	const [availableFilters, setAvailableFilters] = useState({
+		categories: [],
+		authors: [],
+		types: ['multiple', 'boolean'],
+		difficulties: ['kolay', 'orta', 'zor'],
+	});
+	const [currentFilters, setCurrentFilters] = useState({
+		category: '',
+		type: '',
+		author: '',
+		difficulty: '',
+	});
+	const [stats, setStats] = useState(null);
 
+	// Fetch initial stats and quiz
 	useEffect(() => {
-		console.log('Component mounted - fetching first quiz');
+		fetchStats();
 		fetchNextQuiz();
 	}, []);
 
-	const handleFilterChange = (e) => {
-		const { name, value } = e.target;
-		console.log('Filter changed:', name, value);
-		setFilters((prev) => ({
-			...prev,
-			[name]: value,
-		}));
-		fetchNextQuiz({ ...filters, [name]: value });
-	};
-
-	const fetchNextQuiz = async (currentFilters = filters) => {
+	const fetchStats = async () => {
 		try {
-			setLoading(true);
-			console.log('Fetching quiz with filters:', currentFilters);
-
-			const queryParams = new URLSearchParams(
-				Object.entries(currentFilters)
-					.filter(([_, value]) => value !== '')
-					.reduce(
-						(acc, [key, value]) => ({ ...acc, [key]: value }),
-						{}
-					)
-			).toString();
-
-			console.log('API URL:', `/api/quizzes/random?${queryParams}`);
-
-			const response = await fetch(`/api/quizzes/random?${queryParams}`);
+			const response = await fetch(`${API_URL}/quizzes/stats`);
 			const data = await response.json();
-			console.log('API Response:', data);
-
-			if (response.ok && data.quizzes && data.quizzes.length > 0) {
-				const quiz = data.quizzes[0];
-				console.log('New quiz loaded:', {
-					question: quiz.question,
-					answerType: quiz.answerType,
-					answers: quiz.answers,
-					correctAnswer: quiz.correctAnswer,
-					authorName: quiz.authorName,
-				});
-
-				if (data.filters) {
-					setAvailableCategories(data.filters.categories || []);
-					setAvailableAuthors(data.filters.authors || []);
-				}
-
-				setCurrentQuiz(quiz);
-				setSelectedAnswer('');
-				setSkipCount((prev) => prev + 1);
-			} else {
-				console.log('No quizzes found:', data.message);
-				if (skipCount > 0) {
-					setSkipCount(0);
-					toast.info('Soru havuzunun başına dönülüyor');
-					return fetchNextQuiz(currentFilters);
-				} else {
-					toast.error('Seçilen filtrelere uygun soru bulunamadı');
-					setCurrentQuiz(null);
-				}
+			if (data.success) {
+				setStats(data.stats);
 			}
 		} catch (error) {
-			console.error('Error in fetchNextQuiz:', error);
-			toast.error('Soru yüklenirken hata oluştu. Lütfen tekrar deneyin.');
-			setCurrentQuiz(null);
+			console.error('Stats yüklenirken hata:', error);
+		}
+	};
+
+	const fetchNextQuiz = async () => {
+		setLoading(true);
+		try {
+			// Build query params
+			const params = new URLSearchParams();
+			Object.entries(currentFilters).forEach(([key, value]) => {
+				if (value) params.append(key, value);
+			});
+
+			const response = await fetch(
+				`${API_URL}/quizzes/random?${params.toString()}`
+			);
+			const data = await response.json();
+
+			if (!data.success) {
+				toast.info(
+					'Bu filtrelere uygun soru bulunamadı. Farklı filtreler deneyin!',
+					{
+						position: 'bottom-right',
+						autoClose: 3000,
+					}
+				);
+				return;
+			}
+
+			setCurrentQuiz(data.quiz);
+			setAvailableFilters((prev) => ({
+				...prev,
+				categories: data.filters.categories,
+				authors: data.filters.authors,
+			}));
+		} catch (error) {
+			console.error('Soru yüklenirken hata:', error);
+			toast.error('Soru yüklenirken bir hata oluştu', {
+				position: 'bottom-right',
+			});
 		} finally {
 			setLoading(false);
 		}
 	};
 
-	const handleAnswerSelect = (answer, index) => {
-		if (!currentQuiz) {
-			console.log('No current quiz available');
-			return;
-		}
+	const handleFilterChange = (e) => {
+		const { name, value } = e.target;
+		setCurrentFilters((prev) => ({
+			...prev,
+			[name]: value,
+		}));
+		fetchNextQuiz();
+	};
 
-		setSelectedAnswer(answer);
-		const isCorrect = index === currentQuiz.correctAnswer;
+	const handleAnswerSelect = async (selected) => {
+		if (selectedAnswer !== null) return; // Prevent multiple selections
+
+		setSelectedAnswer(selected);
+		const isCorrect =
+			currentQuiz.type === 'boolean'
+				? (selected === 'true' ? 0 : 1) === currentQuiz.correctAnswer
+				: selected === currentQuiz.correctAnswer;
+
+		setShowCorrect(true);
 
 		if (isCorrect) {
 			setScore((prev) => prev + 1);
-			toast.success('Doğru cevap!', {
-				position: 'top-right',
-				autoClose: 1500,
+			toast.success('🎉 Doğru cevap!', {
+				position: 'bottom-right',
+				autoClose: 2000,
 			});
 		} else {
-			const correctAnswer =
-				currentQuiz.answers[currentQuiz.correctAnswer];
-			toast.error(`Yanlış cevap! Doğru cevap: ${correctAnswer}`, {
-				position: 'top-right',
-				autoClose: 1500,
+			toast.error('❌ Yanlış cevap!', {
+				position: 'bottom-right',
+				autoClose: 2000,
 			});
 		}
+
 		setQuestionsAnswered((prev) => prev + 1);
 
+		// Wait before fetching next question
 		setTimeout(() => {
+			setSelectedAnswer(null);
+			setShowCorrect(false);
 			fetchNextQuiz();
 		}, 1500);
 	};
 
+	const getAnswerOptions = () => {
+		if (currentQuiz.type === 'boolean') {
+			return [
+				{ text: 'Doğru', value: 'true' },
+				{ text: 'Yanlış', value: 'false' },
+			];
+		}
+		return currentQuiz.answers.map((answer, index) => ({
+			text: answer,
+			value: index,
+		}));
+	};
+
+	const getAnswerButtonClass = (value) => {
+		if (selectedAnswer === null) return '';
+
+		if (currentQuiz.type === 'boolean') {
+			const correctAnswer =
+				currentQuiz.correctAnswer === 0 ? 'true' : 'false';
+			if (value === selectedAnswer) {
+				return value === correctAnswer ? 'correct' : 'incorrect';
+			}
+			return value === correctAnswer && showCorrect
+				? 'show-correct'
+				: 'disabled';
+		} else {
+			if (value === selectedAnswer) {
+				return value === currentQuiz.correctAnswer
+					? 'correct'
+					: 'incorrect';
+			}
+			return value === currentQuiz.correctAnswer && showCorrect
+				? 'show-correct'
+				: 'disabled';
+		}
+	};
+
+	if (loading) {
+		return (
+			<div className='quiz-container'>
+				<div className='loading-container'>
+					<div className='loading-spinner'></div>
+					<div className='loading-text'>Soru yükleniyor...</div>
+				</div>
+			</div>
+		);
+	}
+
 	return (
 		<div className='quiz-container'>
-			<div className='quiz-paper'>
-				<div className='quiz-header'>
-					<h1 className='quiz-title'>Quiz Yarışması</h1>
-					<div className='score-container'>
-						<span className='score-text'>
-							Puan:{' '}
-							<span
-								className={`score-value ${
-									score > 0 && score === questionsAnswered
-										? 'perfect'
-										: ''
-								}`}
-							>
-								{score}
-							</span>
-							<span className='score-separator'>/</span>
-							<span>{questionsAnswered}</span>
-						</span>
+			<div className='quiz-dashboard'>
+				{/* Stats Sidebar */}
+				<aside className='stats-sidebar'>
+					<div className='stats-header'>
+						<div className='stats-header-icon'>📊</div>
+						<h2 className='stats-header-text'>İstatistikler</h2>
 					</div>
-				</div>
 
-				<div className='filters-paper'>
+					<div className='stats-grid'>
+						<div className='stat-card'>
+							<div className='stat-value'>{score}</div>
+							<div className='stat-label'>Puan</div>
+						</div>
+						<div className='stat-card'>
+							<div className='stat-value'>
+								{questionsAnswered}
+							</div>
+							<div className='stat-label'>Cevaplanan</div>
+						</div>
+						<div className='stat-card'>
+							<div className='stat-value'>
+								{questionsAnswered > 0
+									? Math.round(
+											(score / questionsAnswered) * 100
+									  )
+									: 0}
+								%
+							</div>
+							<div className='stat-label'>Başarı</div>
+						</div>
+						<div className='stat-card'>
+							<div className='stat-value'>
+								{stats?.approved || 0}
+							</div>
+							<div className='stat-label'>Toplam</div>
+						</div>
+					</div>
+
+					<div className='progress-section'>
+						<div className='progress-title'>
+							<div className='progress-title-icon'>🎯</div>
+							<span>İlerleme</span>
+						</div>
+						<div className='progress-bar'>
+							<div
+								className='progress-fill'
+								style={{
+									width: `${
+										questionsAnswered > 0
+											? Math.round(
+													(score /
+														questionsAnswered) *
+														100
+											  )
+											: 0
+									}%`,
+								}}
+							></div>
+						</div>
+						<div className='progress-label'>
+							<span>
+								{score} doğru / {questionsAnswered} soru
+							</span>
+							<span className='progress-percentage'>
+								{questionsAnswered > 0
+									? Math.round(
+											(score / questionsAnswered) * 100
+									  )
+									: 0}
+								%
+							</span>
+						</div>
+					</div>
+
+					{stats && (
+						<div className='progress-section'>
+							<div className='progress-title'>
+								<div className='progress-title-icon'>🏆</div>
+								<span>Genel İstatistikler</span>
+							</div>
+							<div className='stats-details'>
+								<div className='stat-row'>
+									<span>Kategoriler</span>
+									<span>{stats.byCategory.length}</span>
+								</div>
+								<div className='stat-row'>
+									<span>Yazarlar</span>
+									<span>
+										{availableFilters.authors.length}
+									</span>
+								</div>
+								<div className='stat-row'>
+									<span>Toplam Soru</span>
+									<span>{stats.approved}</span>
+								</div>
+							</div>
+						</div>
+					)}
+				</aside>
+
+				{/* Main Quiz Content */}
+				<main className='quiz-paper'>
+					<h1 className='quiz-title'>Trivia Zamanı!</h1>
+
+					{/* Filters */}
 					<div className='filters-container'>
-						<div className='filter-group'>
-							<label className='filter-label'>Kategori</label>
-							<select
-								className='filter-select'
-								name='category'
-								value={filters.category}
-								onChange={handleFilterChange}
-							>
-								<option value=''>Tüm Kategoriler</option>
-								{availableCategories.map((category) => (
-									<option
-										key={category}
-										value={category}
-									>
-										{category === 'General Knowledge'
-											? 'Genel Kültür'
-											: category === 'Entertainment'
-											? 'Eğlence'
-											: category === 'Science'
-											? 'Bilim'
-											: category === 'Mythology'
-											? 'Mitoloji'
-											: category === 'Sports'
-											? 'Spor'
-											: category === 'Geography'
-											? 'Coğrafya'
-											: category === 'History'
-											? 'Tarih'
-											: category === 'Politics'
-											? 'Politika'
-											: category === 'Art'
-											? 'Sanat'
-											: category === 'Celebrities'
-											? 'Ünlüler'
-											: category === 'Animals'
-											? 'Hayvanlar'
-											: category === 'Vehicles'
-											? 'Araçlar'
-											: category}
-									</option>
-								))}
-							</select>
-						</div>
-
-						<div className='filter-group'>
-							<label className='filter-label'>Soru Tipi</label>
-							<select
-								className='filter-select'
-								name='answerType'
-								value={filters.answerType}
-								onChange={handleFilterChange}
-							>
-								<option value=''>Tüm Tipler</option>
-								<option value='multiple'>Çoktan Seçmeli</option>
-								<option value='boolean'>Doğru/Yanlış</option>
-							</select>
-						</div>
-
-						<div className='filter-group'>
-							<label className='filter-label'>Yazar</label>
-							<select
-								className='filter-select'
-								name='authorName'
-								value={filters.authorName}
-								onChange={handleFilterChange}
-							>
-								<option value=''>Tüm Yazarlar</option>
-								{availableAuthors.map((author) => (
-									<option
-										key={author}
-										value={author}
-									>
-										{author}
-									</option>
-								))}
-							</select>
-						</div>
-					</div>
-				</div>
-
-				{loading ? (
-					<div className='loading-container'>
-						<div className='loading-spinner'></div>
-					</div>
-				) : currentQuiz ? (
-					<div className='quiz-content'>
-						<div className='quiz-tags'>
-							<span className='quiz-tag'>
-								{currentQuiz.category === 'General Knowledge'
-									? 'Genel Kültür'
-									: currentQuiz.category === 'Entertainment'
-									? 'Eğlence'
-									: currentQuiz.category === 'Science'
-									? 'Bilim'
-									: currentQuiz.category === 'Mythology'
-									? 'Mitoloji'
-									: currentQuiz.category === 'Sports'
-									? 'Spor'
-									: currentQuiz.category === 'Geography'
-									? 'Coğrafya'
-									: currentQuiz.category === 'History'
-									? 'Tarih'
-									: currentQuiz.category === 'Politics'
-									? 'Politika'
-									: currentQuiz.category === 'Art'
-									? 'Sanat'
-									: currentQuiz.category === 'Celebrities'
-									? 'Ünlüler'
-									: currentQuiz.category === 'Animals'
-									? 'Hayvanlar'
-									: currentQuiz.category === 'Vehicles'
-									? 'Araçlar'
-									: currentQuiz.category}
-							</span>
-							<span className='quiz-tag'>
-								{currentQuiz.difficulty === 'easy'
-									? 'Kolay'
-									: currentQuiz.difficulty === 'medium'
-									? 'Orta'
-									: currentQuiz.difficulty === 'hard'
-									? 'Zor'
-									: currentQuiz.difficulty}
-							</span>
-							<span className='quiz-tag'>
-								{currentQuiz.answerType === 'boolean'
-									? 'Doğru/Yanlış'
-									: 'Çoktan Seçmeli'}
-							</span>
-						</div>
-						<h2 className='question-text'>
-							{currentQuiz.question}
-						</h2>
-						<div className='answer-options'>
-							{currentQuiz.answers.map((answer, index) => (
-								<button
-									key={index}
-									className={`answer-button ${
-										selectedAnswer === answer
-											? 'selected'
-											: ''
-									} ${
-										selectedAnswer &&
-										index === currentQuiz.correctAnswer
-											? 'correct'
-											: ''
-									} ${
-										selectedAnswer &&
-										index !== currentQuiz.correctAnswer &&
-										selectedAnswer === answer
-											? 'incorrect'
-											: ''
-									}`}
-									onClick={() =>
-										handleAnswerSelect(answer, index)
-									}
-									disabled={selectedAnswer !== ''}
-								>
-									{answer}
-								</button>
-							))}
-						</div>
-						<div className='quiz-info'>
-							<span className='author-text'>
-								Yazar:{' '}
-								<span className='author-name'>
-									{currentQuiz.authorName}
-								</span>
-							</span>
-						</div>
-						<button
-							className='skip-button'
-							onClick={() => fetchNextQuiz()}
-							disabled={selectedAnswer !== ''}
+						<select
+							name='category'
+							value={currentFilters.category}
+							onChange={handleFilterChange}
+							className='filter-select'
 						>
-							Soruyu Değiştir
-						</button>
+							<option value=''>Tüm Kategoriler</option>
+							{availableFilters.categories.map((category) => (
+								<option
+									key={category}
+									value={category}
+								>
+									{category.charAt(0).toUpperCase() +
+										category.slice(1)}
+								</option>
+							))}
+						</select>
+
+						<select
+							name='difficulty'
+							value={currentFilters.difficulty}
+							onChange={handleFilterChange}
+							className='filter-select'
+						>
+							<option value=''>Tüm Zorluklar</option>
+							{availableFilters.difficulties.map((difficulty) => (
+								<option
+									key={difficulty}
+									value={difficulty}
+								>
+									{difficulty === 'kolay'
+										? 'Kolay'
+										: difficulty === 'orta'
+										? 'Orta'
+										: 'Zor'}
+								</option>
+							))}
+						</select>
+
+						<select
+							name='type'
+							value={currentFilters.type}
+							onChange={handleFilterChange}
+							className='filter-select'
+						>
+							<option value=''>Tüm Tipler</option>
+							<option value='multiple'>Çoktan Seçmeli</option>
+							<option value='boolean'>Doğru/Yanlış</option>
+						</select>
+
+						<select
+							name='author'
+							value={currentFilters.author}
+							onChange={handleFilterChange}
+							className='filter-select'
+						>
+							<option value=''>Tüm Yazarlar</option>
+							{availableFilters.authors.map((author) => (
+								<option
+									key={author}
+									value={author}
+								>
+									{author}
+								</option>
+							))}
+						</select>
 					</div>
-				) : (
-					<div className='no-questions'>
-						Seçilen kriterlere uygun soru bulunamadı. Farklı
-						filtreler deneyin veya yeni sorular ekleyin!
-					</div>
-				)}
+
+					{currentQuiz && (
+						<div className='quiz-content'>
+							<div className='quiz-meta'>
+								<div className='quiz-author'>
+									<div className='author-avatar'>
+										{currentQuiz.author
+											.charAt(0)
+											.toUpperCase()}
+									</div>
+									<span>{currentQuiz.author}</span>
+								</div>
+
+								<div
+									className={`quiz-difficulty ${currentQuiz.difficulty}`}
+								>
+									<div className='difficulty-icon'>
+										{currentQuiz.difficulty === 'kolay'
+											? '🎯'
+											: currentQuiz.difficulty === 'orta'
+											? '⚡'
+											: '🔥'}
+									</div>
+									<span>
+										{currentQuiz.difficulty === 'kolay'
+											? 'Kolay'
+											: currentQuiz.difficulty === 'orta'
+											? 'Orta'
+											: 'Zor'}
+									</span>
+								</div>
+
+								<div className='quiz-category'>
+									<span>
+										{currentQuiz.category
+											.charAt(0)
+											.toUpperCase() +
+											currentQuiz.category.slice(1)}
+									</span>
+								</div>
+							</div>
+
+							<div className='quiz-question'>
+								{currentQuiz.question}
+							</div>
+
+							<div className='answers-container'>
+								{getAnswerOptions().map((option, index) => (
+									<button
+										key={index}
+										className={`answer-button ${getAnswerButtonClass(
+											option.value
+										)}`}
+										onClick={() =>
+											handleAnswerSelect(option.value)
+										}
+										disabled={selectedAnswer !== null}
+									>
+										<div className='answer-icon'></div>
+										<span>{option.text}</span>
+									</button>
+								))}
+							</div>
+
+							<button
+								className='skip-button'
+								onClick={fetchNextQuiz}
+							>
+								Soruyu Değiştir
+							</button>
+						</div>
+					)}
+				</main>
 			</div>
 		</div>
 	);

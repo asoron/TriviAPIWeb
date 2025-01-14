@@ -8,96 +8,109 @@ const features = [
 	{
 		title: 'RESTful API',
 		description:
-			'Kapsamlı soru bankamıza basit ve sezgisel REST API üzerinden erişin. Web ve mobil uygulamalar için mükemmel çözüm.',
+			'Modern ve sezgisel REST API ile trivia sorularına erişin. Çoktan seçmeli ve doğru/yanlış formatlarında, farklı zorluk seviyelerinde sorular.',
 		icon: '🔌',
 		color: '#FF4081',
 		gradient: 'linear-gradient(135deg, #FF4081 0%, #C51162 100%)',
 		highlights: [
 			'Kolay entegrasyon',
 			'Detaylı dokümantasyon',
-			'Güvenilir performans',
+			'JSON yanıtlar',
 		],
 	},
 	{
-		title: 'Çoklu Format',
+		title: 'Çoklu Filtreleme',
 		description:
-			'Hem çoktan seçmeli hem de doğru/yanlış soruları destekler. Kategori, zorluk veya türe göre kolayca filtreleme yapın.',
+			'Kategori, tür ve zorluk seviyesine göre soruları filtreleme. Her soru için yazar ve oluşturulma tarihi bilgisi.',
 		icon: '🎯',
 		color: '#7C4DFF',
 		gradient: 'linear-gradient(135deg, #7C4DFF 0%, #512DA8 100%)',
-		highlights: ['Çoktan seçmeli', 'Doğru/Yanlış', 'Özel kategoriler'],
+		highlights: [
+			'Kategori filtreleme',
+			'Zorluk seviyeleri',
+			'Detaylı bilgiler',
+		],
 	},
 	{
-		title: 'Geliştirici Araçları',
+		title: 'Yönetim Paneli',
 		description:
-			'Kapsamlı dokümantasyon, test ortamı ve soru içeriğinizi yönetmek için kontrol paneli.',
+			'Soru ekleyin, onaylayın ve istatistikleri takip edin. Kullanıcı dostu arayüz ile içerik yönetimi.',
 		icon: '🛠️',
 		color: '#00BFA5',
 		gradient: 'linear-gradient(135deg, #00BFA5 0%, #00796B 100%)',
-		highlights: ['Test ortamı', 'API paneli', 'Gerçek zamanlı analitik'],
+		highlights: ['Soru yönetimi', 'İstatistikler', 'Onay sistemi'],
 	},
 ];
 
 const apiFeatures = [
 	{
-		title: 'Kolay Entegrasyon',
-		description: 'Basit HTTP istekleri ve JSON yanıtları',
-		icon: '🔄',
+		title: 'Rastgele Soru',
+		description: 'Filtrelere göre onaylanmış sorulardan rastgele getirme',
+		icon: '🎲',
 		color: '#FF4081',
 		gradient: 'linear-gradient(135deg, #FF4081 0%, #C51162 100%)',
-		code: 'GET /api/v1/questions',
+		code: 'GET /quizzes/random',
 	},
 	{
-		title: 'Özel Filtreler',
-		description: 'Kategori, zorluk ve türe göre filtreleme',
+		title: 'Soru Ekleme',
+		description: 'Yeni soru ekleyip onaya gönderme',
+		icon: '➕',
+		color: '#7C4DFF',
+		gradient: 'linear-gradient(135deg, #7C4DFF 0%, #512DA8 100%)',
+		code: 'POST /quizzes',
+	},
+	{
+		title: 'İstatistikler',
+		description: 'Detaylı soru istatistikleri',
+		icon: '📊',
+		color: '#00BFA5',
+		gradient: 'linear-gradient(135deg, #00BFA5 0%, #00796B 100%)',
+		code: 'GET /quizzes/stats',
+	},
+	{
+		title: 'Filtreleme',
+		description: 'Kategori, tür ve zorluk seviyesine göre filtreleme',
 		icon: '🔍',
-		color: '#7C4DFF',
-		gradient: 'linear-gradient(135deg, #7C4DFF 0%, #512DA8 100%)',
-		code: 'GET /api/v1/questions?category=science',
-	},
-	{
-		title: 'Hız Sınırı',
-		description: 'Ücretsiz paket için saatte 1000 istek',
-		icon: '⚡',
-		color: '#00BFA5',
-		gradient: 'linear-gradient(135deg, #00BFA5 0%, #00796B 100%)',
-		code: 'X-RateLimit-Remaining: 985',
-	},
-	{
-		title: 'CORS Destekli',
-		description: 'Kolay geliştirme için tüm kaynaklardan erişim',
-		icon: '🌐',
 		color: '#FF4081',
 		gradient: 'linear-gradient(135deg, #FF4081 0%, #C51162 100%)',
-		code: 'Access-Control-Allow-Origin: *',
+		code: '?category=tarih&difficulty=orta',
 	},
 	{
-		title: 'Sürüm Kontrolü',
-		description: 'Geriye dönük uyumlu kararlı API sürümleri',
-		icon: '📦',
+		title: 'Kategoriler',
+		description: 'Mevcut kategorileri listeleme',
+		icon: '📑',
 		color: '#7C4DFF',
 		gradient: 'linear-gradient(135deg, #7C4DFF 0%, #512DA8 100%)',
-		code: 'api.triviapi.com/v1/',
+		code: 'GET /quizzes/categories',
 	},
 	{
-		title: 'Anlık Güncellemeler',
-		description: 'Veritabanına düzenli olarak yeni sorular eklenir',
-		icon: '🔄',
+		title: 'Başarılı Yanıtlar',
+		description: 'Her yanıtta başarı durumu ve mesaj',
+		icon: '✨',
 		color: '#00BFA5',
 		gradient: 'linear-gradient(135deg, #00BFA5 0%, #00796B 100%)',
-		code: 'WebSocket bağlantısı aktif',
+		code: '{ "success": true, "message": "..." }',
 	},
 ];
 
 const codeExample = `
-fetch('https://api.triviapi.com/v1/random', {
+// Rastgele bir soru getirme örneği
+fetch('https://triviapi.onrender.com/api/quizzes/random?difficulty=orta', {
   method: 'GET',
   headers: {
     'Content-Type': 'application/json'
   }
 })
 .then(response => response.json())
-.then(data => console.log(data));
+.then(data => {
+  if (data.success) {
+    const quiz = data.quiz;
+    console.log('Soru:', quiz.question);
+    console.log('Kategori:', quiz.category);
+    console.log('Zorluk:', quiz.difficulty);
+    console.log('Cevaplar:', quiz.answers);
+  }
+});
 `;
 
 const Home = () => {
@@ -172,15 +185,21 @@ const Home = () => {
 							</span>
 						</div>
 						<div className='hero-feature'>
-							<span className='hero-feature-icon'>🎲</span>
+							<span className='hero-feature-icon'>🎯</span>
 							<span className='hero-feature-text'>
 								Çoklu Kategoriler
 							</span>
 						</div>
 						<div className='hero-feature'>
+							<span className='hero-feature-icon'>🎲</span>
+							<span className='hero-feature-text'>
+								3 Zorluk Seviyesi
+							</span>
+						</div>
+						<div className='hero-feature'>
 							<span className='hero-feature-icon'>⚡</span>
 							<span className='hero-feature-text'>
-								Anlık Güncellemeler
+								Hızlı Yanıtlar
 							</span>
 						</div>
 					</div>
@@ -334,13 +353,13 @@ const Home = () => {
 				<div className='code-example-container'>
 					<div className='code-example'>
 						<div className='code-line code-comment'>
-							// API'den rastgele bir soru almak için
+							// API'den belirli zorluktaki bir soru almak için
 						</div>
 						<div className='code-line'>
 							<span className='code-keyword'>const</span> response
 							= <span className='code-keyword'>await</span> fetch(
 							<span className='code-string'>
-								'https://triviapi.dev/api/quizzes/random'
+								'https://triviapi.onrender.com/api/quizzes/random?difficulty=kolay'
 							</span>
 							);
 						</div>
@@ -353,10 +372,13 @@ const Home = () => {
 							// Soru detaylarını görüntüle
 						</div>
 						<div className='code-line'>
-							console.log(quiz.question);
+							console.log(quiz.question); // Soru metni
 						</div>
 						<div className='code-line'>
-							console.log(quiz.answers);
+							console.log(quiz.difficulty); // Zorluk seviyesi
+						</div>
+						<div className='code-line'>
+							console.log(quiz.answers); // Cevap seçenekleri
 						</div>
 						<div className='code-line code-comment'>
 							// Doğru cevabı kontrol et

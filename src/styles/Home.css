@@ -1,7 +1,6 @@
 /** @format */
 
 :root {
-	--section-padding: 8rem 0;
 	--border-radius: 24px;
 	--transition-bezier: cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -333,7 +332,6 @@
 
 /* Features Section */
 .features-section {
-	padding: var(--section-padding);
 	position: relative;
 	z-index: 1;
 }
@@ -999,6 +997,9 @@
 	text-decoration: none;
 	display: inline-block;
 	margin-top: 2rem;
+	opacity: 0;
+	transform: translateY(30px);
+	animation: slideUpFade 0.6s var(--transition-bezier) 0.8s forwards;
 }
 
 .author-badge {
@@ -1010,13 +1011,32 @@
 	border: 1px solid rgba(255, 255, 255, 0.1);
 	border-radius: 100px;
 	transition: all 0.3s var(--transition-bezier);
+	position: relative;
+	overflow: hidden;
+}
+
+.author-badge::before {
+	content: '';
+	position: absolute;
+	inset: 0;
+	background: linear-gradient(
+		135deg,
+		rgba(255, 64, 129, 0.2),
+		rgba(124, 77, 255, 0.2)
+	);
+	opacity: 0;
+	transition: opacity 0.3s var(--transition-bezier);
 }
 
 .author-badge:hover {
-	transform: translateY(-4px);
+	transform: translateY(-4px) scale(1.02);
 	background: rgba(255, 255, 255, 0.08);
-	border-color: rgba(255, 255, 255, 0.2);
-	box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+	border-color: rgba(124, 77, 255, 0.3);
+	box-shadow: 0 8px 32px rgba(124, 77, 255, 0.2);
+}
+
+.author-badge:hover::before {
+	opacity: 1;
 }
 
 .author-avatar {
@@ -1028,20 +1048,121 @@
 	background: linear-gradient(135deg, #ff4081, #7c4dff);
 	border-radius: 50%;
 	font-size: 1.2rem;
+	position: relative;
+	z-index: 1;
+	animation: pulseGlow 2s var(--transition-bezier) infinite;
 }
 
 .author-info {
 	text-align: left;
+	position: relative;
+	z-index: 1;
+	opacity: 0;
+	transform: translateX(-20px);
+	animation: slideRightFade 0.6s var(--transition-bezier) 1s forwards;
 }
 
 .author-name {
 	color: rgba(255, 255, 255, 0.9);
 	font-weight: 600;
 	font-size: 1rem;
+	background: linear-gradient(135deg, #ff4081, #7c4dff);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	background-size: 200% auto;
+	animation: shine 3s linear infinite;
 }
 
 .author-role {
 	color: rgba(255, 255, 255, 0.6);
 	font-size: 0.9rem;
 	margin-top: 0.2rem;
+	transition: color 0.3s var(--transition-bezier);
+}
+
+.author-badge:hover .author-role {
+	color: rgba(255, 255, 255, 0.8);
+}
+
+@keyframes pulseGlow {
+	0% {
+		box-shadow: 0 0 0 0 rgba(124, 77, 255, 0.4);
+	}
+	70% {
+		box-shadow: 0 0 0 10px rgba(124, 77, 255, 0);
+	}
+	100% {
+		box-shadow: 0 0 0 0 rgba(124, 77, 255, 0);
+	}
+}
+
+@keyframes shine {
+	to {
+		background-position: 200% center;
+	}
+}
+
+/* General animations for other elements */
+.hero-title,
+.hero-subtitle {
+	opacity: 0;
+	transform: translateY(30px);
+	animation: slideUpFade 0.6s var(--transition-bezier) forwards;
+}
+
+.hero-subtitle {
+	animation-delay: 0.2s;
+}
+
+.hero-features {
+	opacity: 0;
+	transform: translateY(20px);
+	animation: slideUpFade 0.6s var(--transition-bezier) 0.4s forwards;
+}
+
+.hero-actions {
+	opacity: 0;
+	transform: translateY(20px);
+	animation: slideUpFade 0.6s var(--transition-bezier) 0.6s forwards;
+}
+
+.feature-highlight {
+	opacity: 0;
+	transform: translateY(20px);
+	animation: slideUpFade 0.6s var(--transition-bezier) forwards;
+}
+
+.feature-highlight:nth-child(1) {
+	animation-delay: 0.2s;
+}
+.feature-highlight:nth-child(2) {
+	animation-delay: 0.4s;
+}
+.feature-highlight:nth-child(3) {
+	animation-delay: 0.6s;
+}
+.feature-highlight:nth-child(4) {
+	animation-delay: 0.8s;
+}
+
+@keyframes slideUpFade {
+	from {
+		opacity: 0;
+		transform: translateY(30px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@keyframes slideRightFade {
+	from {
+		opacity: 0;
+		transform: translateX(-20px);
+	}
+	to {
+		opacity: 1;
+		transform: translateX(0);
+	}
 }
