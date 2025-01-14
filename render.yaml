@@ -1,0 +1,17 @@
+# @format
+
+services:
+    - type: web
+      name: triviapi-frontend
+      env: static
+      buildCommand: npm install && npm run build
+      staticPublishPath: ./build
+      routes:
+          - type: rewrite
+            source: /*
+            destination: /index.html
+      envVars:
+          - key: NODE_VERSION
+            value: 18.17.0
+          - key: REACT_APP_API_URL
+            value: https://triviapi.onrender.com/api
