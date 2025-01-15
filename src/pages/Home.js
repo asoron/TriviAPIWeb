@@ -160,10 +160,7 @@ const Home = () => {
 	}, []);
 
 	const handleDocClick = () => {
-		// Get the current hostname
-		const hostname = window.location.origin;
-		// Redirect to the docs page
-		window.location.href = `${hostname}/docs`;
+		navigate('/docs');
 	};
 
 	return (
