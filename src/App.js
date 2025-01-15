@@ -58,6 +58,10 @@ function App() {
 							path='/docs'
 							element={<Documentation />}
 						/>
+						<Route
+							path='/docs/*'
+							element={<Documentation />}
+						/>
 					</Routes>
 				</main>
 				<ToastContainer
