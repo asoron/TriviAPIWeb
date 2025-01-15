@@ -82,8 +82,8 @@ src/
 
 ### 1. **Depoyu Klonlayın**
 ```bash
-git clone https://github.com/kullaniciadi/triviapi-docs.git
-cd triviapi-docs
+git clone https://github.com/asoron/TriviAPIWeb.git
+cd TriviAPIWeb
 ```
 
 ### 2. **Bağımlılıkları Yükleyin**
@@ -96,14 +96,11 @@ npm install
 npm start
 ```
 
-### 4. **Canlı Görüntüleme**
-- Uygulama, `http://localhost:3000` adresinde çalışacaktır.
-
 ---
 
 ## 🌐 **Canlı Demo**
 
-[TriviAPI Dokümantasyon ve Demo Sitesi](https://triviapi-demo.com)
+[TriviAPI Dokümantasyon ve Demo Sitesi]([https://triviapi-demo.com](https://triviapidoc.onrender.com))
 
 ---
 
@@ -124,12 +121,6 @@ Bu projeye katkıda bulunmak isterseniz, aşağıdaki adımları takip edebilirs
    git push origin yeni-ozellik
    ```
 5. **Pull Request**: Değişikliklerinizi ana depoya göndermek için bir pull request oluşturun.
-
----
-
-## 📜 **Lisans**
-
-Bu proje [MIT Lisansı](LICENSE) ile lisanslanmıştır. Dilediğiniz gibi kullanabilir, değiştirebilir ve paylaşabilirsiniz.
 
 ---
 
