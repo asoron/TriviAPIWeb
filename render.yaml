@@ -8,19 +8,7 @@ services:
       staticPublishPath: ./build
       routes:
           - type: rewrite
-            source: /docs
-            destination: /index.html
-          - type: rewrite
-            source: /browse
-            destination: /index.html
-          - type: rewrite
-            source: /submit
-            destination: /index.html
-          - type: rewrite
-            source: /admin
-            destination: /index.html
-          - type: rewrite
-            source: /*
+            source: /**
             destination: /index.html
       envVars:
           - key: NODE_VERSION

@@ -443,7 +443,10 @@ const Home = () => {
 			<section className='docs-preview'>
 				<div className='section-header'>
 					<h2>Dokümantasyon</h2>
-					<p>API'yi hemen kullanmaya başlayın</p>
+					<p>
+						API'yi kullanmaya başlamadan önce dokümantasyonu
+						inceleyin.
+					</p>
 				</div>
 				<div className='code-examples'>
 					{apiFeatures.map((feature, index) => (
