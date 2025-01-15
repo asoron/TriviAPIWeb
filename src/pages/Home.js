@@ -160,7 +160,7 @@ const Home = () => {
 	}, []);
 
 	const handleDocClick = () => {
-		navigate('/docs');
+		window.location.href = 'https://triviapidoc.onrender.com/docs';
 	};
 
 	return (
@@ -400,13 +400,13 @@ const Home = () => {
 							edin. Modern ve kullanımı kolay REST API'miz ile
 							trivia sorularını hızlıca uygulamanıza ekleyin.
 						</p>
-						<a
-							href='/docs'
+						<Link
+							to='/docs'
 							className='code-example-button'
 						>
 							<span>📚</span>
 							<span>Dokümantasyonu İncele</span>
-						</a>
+						</Link>
 					</div>
 				</div>
 			</section>
@@ -438,46 +438,6 @@ const Home = () => {
 						</Link>
 					</div>
 				</div>
-			</section>
-
-			<section className='docs-preview'>
-				<div className='section-header'>
-					<h2>Dokümantasyon</h2>
-					<p>
-						API'yi kullanmaya başlamadan önce dokümantasyonu
-						inceleyin.
-					</p>
-				</div>
-				<div className='code-examples'>
-					{apiFeatures.map((feature, index) => (
-						<div
-							key={index}
-							className='feature-highlight'
-							onClick={handleDocClick}
-							style={{ cursor: 'pointer' }}
-						>
-							<div
-								className='feature-icon'
-								style={{
-									background: feature.gradient,
-								}}
-							>
-								{feature.icon}
-							</div>
-							<div className='feature-content'>
-								<h3>{feature.title}</h3>
-								<p>{feature.description}</p>
-								<code>{feature.code}</code>
-							</div>
-						</div>
-					))}
-				</div>
-				<button
-					onClick={handleDocClick}
-					className='view-docs-button'
-				>
-					Dokümantasyonu İncele
-				</button>
 			</section>
 		</div>
 	);
