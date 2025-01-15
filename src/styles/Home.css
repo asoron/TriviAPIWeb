@@ -1166,3 +1166,37 @@
 		transform: translateX(0);
 	}
 }
+
+.feature-highlight {
+	background: rgba(15, 23, 42, 0.6);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	border-radius: var(--border-radius);
+	padding: 1.5rem;
+	transition: all 0.3s var(--transition-bezier);
+	cursor: pointer;
+}
+
+.feature-highlight:hover {
+	transform: translateY(-4px);
+	background: rgba(15, 23, 42, 0.8);
+	border-color: rgba(124, 77, 255, 0.3);
+	box-shadow: 0 8px 32px rgba(124, 77, 255, 0.2);
+}
+
+.view-docs-button {
+	margin-top: 2rem;
+	padding: 1rem 2rem;
+	font-size: 1rem;
+	font-weight: 500;
+	color: white;
+	background: var(--accent-gradient);
+	border: none;
+	border-radius: 8px;
+	cursor: pointer;
+	transition: all 0.3s var(--transition-bezier);
+}
+
+.view-docs-button:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 8px 32px rgba(124, 77, 255, 0.3);
+}

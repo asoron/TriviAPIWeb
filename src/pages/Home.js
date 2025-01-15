@@ -1,7 +1,7 @@
 /** @format */
 
 import React, { useEffect, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import '../styles/Home.css';
 
 const features = [
@@ -119,6 +119,7 @@ const Home = () => {
 	const apiFeaturesRef = useRef(null);
 	const codeRef = useRef(null);
 	const ctaRef = useRef(null);
+	const navigate = useNavigate();
 
 	useEffect(() => {
 		const observerOptions = {
@@ -157,6 +158,10 @@ const Home = () => {
 
 		return () => clearInterval(interval);
 	}, []);
+
+	const handleDocClick = () => {
+		navigate('/docs');
+	};
 
 	return (
 		<div className='home-container'>
@@ -433,6 +438,43 @@ const Home = () => {
 						</Link>
 					</div>
 				</div>
+			</section>
+
+			<section className='docs-preview'>
+				<div className='section-header'>
+					<h2>Dokümantasyon</h2>
+					<p>API'yi hemen kullanmaya başlayın</p>
+				</div>
+				<div className='code-examples'>
+					{apiFeatures.map((feature, index) => (
+						<div
+							key={index}
+							className='feature-highlight'
+							onClick={handleDocClick}
+							style={{ cursor: 'pointer' }}
+						>
+							<div
+								className='feature-icon'
+								style={{
+									background: feature.gradient,
+								}}
+							>
+								{feature.icon}
+							</div>
+							<div className='feature-content'>
+								<h3>{feature.title}</h3>
+								<p>{feature.description}</p>
+								<code>{feature.code}</code>
+							</div>
+						</div>
+					))}
+				</div>
+				<button
+					onClick={handleDocClick}
+					className='view-docs-button'
+				>
+					Dokümantasyonu İncele
+				</button>
 			</section>
 		</div>
 	);
