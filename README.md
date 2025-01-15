@@ -98,9 +98,9 @@ npm start
 
 ---
 
-## 🌐 **Canlı Demo**
+## 🌐 Canlı Demo
 
-[TriviAPI Dokümantasyon ve Demo Sitesi]([https://triviapi-demo.com](https://triviapidoc.onrender.com))
+[TriviAPI Dokümantasyon ve Demo Sitesi](https://triviapidoc.onrender.com)
 
 ---
 
