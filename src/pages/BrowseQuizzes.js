@@ -7,6 +7,7 @@ import '../styles/BrowseQuizzes.css';
 const API_URL = 'https://triviapi.onrender.com/api';
 
 function BrowseQuizzes() {
+	const [initialLoad, setInitialLoad] = useState(true);
 	const [loading, setLoading] = useState(true);
 	const [currentQuiz, setCurrentQuiz] = useState(null);
 	const [score, setScore] = useState(0);
@@ -29,8 +30,11 @@ function BrowseQuizzes() {
 
 	// Fetch initial stats and quiz
 	useEffect(() => {
-		fetchStats();
-		fetchNextQuiz();
+		const initializeData = async () => {
+			await Promise.all([fetchStats(), fetchNextQuiz()]);
+			setInitialLoad(false);
+		};
+		initializeData();
 	}, []);
 
 	const fetchStats = async () => {
@@ -46,7 +50,9 @@ function BrowseQuizzes() {
 	};
 
 	const fetchNextQuiz = async () => {
-		setLoading(true);
+		if (!initialLoad) {
+			setLoading(true);
+		}
 		try {
 			// Build query params
 			const params = new URLSearchParams();
@@ -60,6 +66,7 @@ function BrowseQuizzes() {
 			const data = await response.json();
 
 			if (!data.success) {
+				setCurrentQuiz(null);
 				toast.info(
 					'Bu filtrelere uygun soru bulunamadı. Farklı filtreler deneyin!',
 					{
@@ -73,8 +80,10 @@ function BrowseQuizzes() {
 			setCurrentQuiz(data.quiz);
 			setAvailableFilters((prev) => ({
 				...prev,
-				categories: data.filters.categories,
-				authors: data.filters.authors,
+				categories: data.filters.categories || prev.categories,
+				authors: data.filters.authors || prev.authors,
+				types: data.filters.types || prev.types,
+				difficulties: data.filters.difficulties || prev.difficulties,
 			}));
 		} catch (error) {
 			console.error('Soru yüklenirken hata:', error);
@@ -86,13 +95,60 @@ function BrowseQuizzes() {
 		}
 	};
 
-	const handleFilterChange = (e) => {
+	const handleFilterChange = async (e) => {
 		const { name, value } = e.target;
-		setCurrentFilters((prev) => ({
+		// Update filters and immediately fetch new question
+		await setCurrentFilters((prev) => ({
 			...prev,
 			[name]: value,
 		}));
-		fetchNextQuiz();
+
+		// Build query params with the new filter value included
+		const params = new URLSearchParams();
+		const newFilters = {
+			...currentFilters,
+			[name]: value,
+		};
+
+		Object.entries(newFilters).forEach(([key, value]) => {
+			if (value) params.append(key, value);
+		});
+
+		setLoading(true);
+		try {
+			const response = await fetch(
+				`${API_URL}/quizzes/random?${params.toString()}`
+			);
+			const data = await response.json();
+
+			if (!data.success) {
+				setCurrentQuiz(null);
+				toast.info(
+					'Bu filtrelere uygun soru bulunamadı. Farklı filtreler deneyin!',
+					{
+						position: 'bottom-right',
+						autoClose: 3000,
+					}
+				);
+				return;
+			}
+
+			setCurrentQuiz(data.quiz);
+			setAvailableFilters((prev) => ({
+				...prev,
+				categories: data.filters.categories || prev.categories,
+				authors: data.filters.authors || prev.authors,
+				types: data.filters.types || prev.types,
+				difficulties: data.filters.difficulties || prev.difficulties,
+			}));
+		} catch (error) {
+			console.error('Soru yüklenirken hata:', error);
+			toast.error('Soru yüklenirken bir hata oluştu', {
+				position: 'bottom-right',
+			});
+		} finally {
+			setLoading(false);
+		}
 	};
 
 	const handleAnswerSelect = async (selected) => {
@@ -166,12 +222,22 @@ function BrowseQuizzes() {
 		}
 	};
 
-	if (loading) {
+	const resetFilters = async () => {
+		await setCurrentFilters({
+			category: '',
+			type: '',
+			author: '',
+			difficulty: '',
+		});
+		fetchNextQuiz();
+	};
+
+	if (initialLoad) {
 		return (
 			<div className='quiz-container'>
 				<div className='loading-container'>
 					<div className='loading-spinner'></div>
-					<div className='loading-text'>Soru yükleniyor...</div>
+					<div className='loading-text'>Sorular yükleniyor...</div>
 				</div>
 			</div>
 		);
@@ -351,9 +417,27 @@ function BrowseQuizzes() {
 								</option>
 							))}
 						</select>
+
+						{Object.values(currentFilters).some(
+							(filter) => filter !== ''
+						) && (
+							<button
+								onClick={resetFilters}
+								className='reset-filters-button'
+							>
+								Filtreleri Sıfırla
+							</button>
+						)}
 					</div>
 
-					{currentQuiz && (
+					{loading ? (
+						<div className='quiz-content loading'>
+							<div className='loading-spinner'></div>
+							<div className='loading-text'>
+								Soru yükleniyor...
+							</div>
+						</div>
+					) : currentQuiz ? (
 						<div className='quiz-content'>
 							<div className='quiz-meta'>
 								<div className='quiz-author'>
@@ -418,9 +502,25 @@ function BrowseQuizzes() {
 
 							<button
 								className='skip-button'
-								onClick={fetchNextQuiz}
+								onClick={() => fetchNextQuiz(false)}
 							>
 								Soruyu Değiştir
+							</button>
+						</div>
+					) : (
+						<div className='no-questions-message'>
+							<div className='message-icon'>🔍</div>
+							<h3>Soru Bulunamadı</h3>
+							<p>
+								Seçtiğiniz filtrelere uygun soru bulunamadı.
+								Lütfen farklı filtreler deneyin veya filtreleri
+								sıfırlayın.
+							</p>
+							<button
+								onClick={resetFilters}
+								className='try-again-button'
+							>
+								Filtreleri Sıfırla
 							</button>
 						</div>
 					)}

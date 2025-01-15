@@ -992,3 +992,124 @@
 	border-radius: 100px;
 	background-color: rgba(124, 77, 255, 0.1);
 }
+
+.reset-filters-button {
+	padding: 0.75rem 1.5rem;
+	background: rgba(124, 77, 255, 0.1);
+	border: 1px solid rgba(124, 77, 255, 0.2);
+	border-radius: 8px;
+	color: var(--text-primary);
+	font-size: 0.875rem;
+	cursor: pointer;
+	transition: all 0.3s var(--transition-bezier);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.5rem;
+}
+
+.reset-filters-button:hover {
+	background: rgba(124, 77, 255, 0.2);
+	border-color: rgba(124, 77, 255, 0.4);
+	transform: translateY(-2px);
+}
+
+.no-questions-message {
+	text-align: center;
+	padding: 3rem 2rem;
+	background: rgba(15, 23, 42, 0.6);
+	border-radius: var(--border-radius);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	margin-top: 2rem;
+}
+
+.message-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+	opacity: 0.8;
+}
+
+.no-questions-message h3 {
+	font-size: 1.5rem;
+	color: var(--text-primary);
+	margin-bottom: 1rem;
+}
+
+.no-questions-message p {
+	color: var(--text-secondary);
+	margin-bottom: 2rem;
+	line-height: 1.6;
+}
+
+.try-again-button {
+	padding: 0.875rem 2rem;
+	background: var(--accent-gradient);
+	border: none;
+	border-radius: 8px;
+	color: white;
+	font-size: 1rem;
+	font-weight: 500;
+	cursor: pointer;
+	transition: all 0.3s var(--transition-bezier);
+}
+
+.try-again-button:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 8px 32px rgba(124, 77, 255, 0.3);
+}
+
+.quiz-content.loading {
+	min-height: 300px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 1rem;
+	background: rgba(15, 23, 42, 0.6);
+	border-radius: var(--border-radius);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	margin-top: 2rem;
+	padding: 2rem;
+}
+
+.loading-container {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 2rem;
+	z-index: 10;
+}
+
+.loading-spinner {
+	width: 50px;
+	height: 50px;
+	border: 3px solid rgba(124, 77, 255, 0.2);
+	border-radius: 50%;
+	border-top-color: rgba(124, 77, 255, 0.8);
+	animation: spin 1s linear infinite;
+}
+
+.loading-text {
+	color: var(--text-primary);
+	font-size: 1.1rem;
+	font-weight: 500;
+	opacity: 0;
+	animation: fadeIn 0.3s ease forwards;
+}
+
+@keyframes spin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+@keyframes fadeIn {
+	to {
+		opacity: 1;
+	}
+}
